@@ -58,7 +58,7 @@ def main():
     else:
         return
  
-    Num = 1000000  # 350000
+    Num = 350000  # 350000
     headers = {'Content-Type':'multipart/form-data; boundary=----WebKitFormBoundaryX3B7rDMPcQlzmJE1',
             'Accept-Encoding':'gzip, deflate',
             'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36'}
@@ -80,6 +80,6 @@ class Worker(Thread):
             main()
         
 if __name__=="__main__":
-    N = 30
+    N = 40
     for i in xrange(N):
         Worker().start()
