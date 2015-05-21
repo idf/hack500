@@ -74,19 +74,30 @@ def main(options, args):
     print "Respond time: " + str(respond[1]) + " seconds"
 
 
-class Worker(Thread):
+class WorkerMixin():
     def __init__(self, options, args):
         self.options = options
         self.args = args
-        super(Worker, self).__init__()
 
     def run(self):
         while True:
             main(self.options, self.args)
 
 
+class WorkerThread(WorkerMixin, Thread):
+    def __init__(self, options, args):
+        WorkerMixin.__init__(self, options, args)
+        Thread.__init__(self)
+
+
+class WorkerProcess(WorkerMixin, Process):
+    def __init__(self, options, args):
+        WorkerMixin.__init__(self, options, args)
+        Process.__init__(self)
+
+
 if __name__ == "__main__":
-    parser = OptionParser()
+    parser = OptionParser()  # option parse is deprecated
     parser.add_option("-t", "--target", action="store",
                       dest="target",
                       default=False,
@@ -108,9 +119,21 @@ if __name__ == "__main__":
                       help="number of threads"
                       )
 
+    parser.add_option("-p", "--process", action="store_true",
+                      dest="process",
+                      default=False,
+                      help="run it using process instead of thread"
+                      )
+
     (options, args) = parser.parse_args()
     print "number of threads: %d" % options.threads
     print "number of lines: %d" % options.lines
 
-    for i in xrange(options.threads):
-        Worker(options, args).start()
+    if options.process:
+        print "running with Process"
+        for i in xrange(options.threads):
+            WorkerProcess(options, args).start()
+    else:
+        print "running with Thread"
+        for i in xrange(options.threads):
+            WorkerThread(options, args).start()
