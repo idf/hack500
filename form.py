@@ -1,5 +1,5 @@
-import sys
 import requests
+
 __author__ = 'Daniel'
 
 
